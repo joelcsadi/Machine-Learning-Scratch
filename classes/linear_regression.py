@@ -48,6 +48,11 @@ class LinearRegression:
             self.Beta = self.Beta - self.learning_rate*d_Beta
         return self
         
+
+    """
+    predict(X) uses the parameters fitted on the model uses it to predict the reponse
+    given the features matrix X.
+    """
     def predict(self, X):
         X = np.array(X)
         if X.ndim == 1:
@@ -56,6 +61,16 @@ class LinearRegression:
         X_design = np.hstack((np.ones((n_observations, 1)), X))
         return X_design @ self.Beta
 
+    """
+    get_R_squared(X,Y) obtains the percentage of variation that the fitted model explains
+    by comparing and subtracting it of the total variaton of the model mean(y_bar).
+    It calculates the variation around the points and the fitted line(Sum of square Residuals /RSS)
+    and calculates the variation around the mean which is(Total sum of squares TSS)
+
+    The formula for R^2 = 1-(RSS/SST)
+    It's a metric for goodness of fit.
+
+    """
     def get_R_squared(self,X,Y):
         X = np.array(X)
         Y = np.array(Y)
@@ -73,6 +88,13 @@ class LinearRegression:
 
         return r_squared
     
+    """
+    get_Parameters() returns the parameter vector that were calculated within the fit of the
+    model. It goes from Beta_0 ... Beta_n where n is the nth parameter. It includes the
+    y_intercept/bias(Beta_0) and the features/weights(Beta_1 -> Beta_n) of the models.
+
+    They were calculated using batch gradient descent in fit(X,Y)
+    """
     def get_Parameters(self):
         return self.Beta
         
