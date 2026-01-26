@@ -71,7 +71,10 @@ class LinearRegression:
         SST = np.sum((Y-y_bar)**2)
         r_squared = 1 - (RSS/SST)
 
-        return f"Multiple R-squared: {r_squared}"
+        return r_squared
+    
+    def get_Parameters(self):
+        return self.Beta
         
 
 
