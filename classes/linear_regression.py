@@ -56,3 +56,22 @@ class LinearRegression:
         X_design = np.hstack((np.ones((n_observations, 1)), X))
         return X_design @ self.Beta
 
+    def get_R_squared(self,X,Y):
+        X = np.array(X)
+        Y = np.array(Y)
+        # If the features vector has only one feature, turn it into a Matrix with Rx1 dimensions
+        if X.ndim == 1:
+            X=X.reshape(-1,1)
+        Y = Y.reshape(-1,1)
+        n_observations = X.shape[0]
+        X_design = np.hstack((np.ones((n_observations,1)),X))
+        y_hat = self.predict(X)
+        y_bar = np.mean(Y)
+        RSS = np.sum((Y-y_hat)**2)
+        SST = np.sum((Y-y_bar)**2)
+        r_squared = 1 - (RSS/SST)
+
+        return f"Multiple R-squared: {r_squared}"
+        
+
+
