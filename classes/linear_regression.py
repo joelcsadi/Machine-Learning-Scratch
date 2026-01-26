@@ -47,11 +47,9 @@ class LinearRegression:
             residuals = Y - Y_hat
             d_Beta = (-2/n_observations)*(X.T @ (residuals))
             self.Beta = self.Beta - self.learning_rate*d_Beta
+        return self
         
     def predict(self, X):
         n_observations = X.shape[0]
-        X = np.hstack((np.ones(n_observations,1),X))
+        X = np.hstack((np.ones((n_observations,1)),X))
         return X @ self.Beta
-
-            
-
