@@ -19,37 +19,42 @@ class LinearRegression:
         self.epochs = epochs
         self.Beta = None
     
-    def fit(self,X,Y):
-        n_observations = X.shape[0]
-        # Create a design matrix with 1's on the left for intercept and the x values as other cols
-        """
-        [[1,3,5]    The vectors are column based and combined together in a design matrix
-         [1,6,8]
-         [1,9,12]]
-        """
-        X = np.hstack((np.ones((n_observations,1)),X))
-        # Create a parameter vector full of zeroes with the number of features as the rows.
-        """
-        [0 - Beta_0
-         0 - Beta_1
-         0] - Beta_2 and so on. 
 
-         It will have the same amount of rows as X Design matrix in order to perform matrix
-         multiplication
-        
-        """
-        self.Beta = np.zeros((X.shape[1],1))
-        Y = Y.reshape(n_observations,1)
+    """
+    fit(X,y) finds the parameters that will fit the best line.
+    It assumes that even though there is one feature, it should be a np matrix and not
+    a 1D vector. The same applies for the Y vector, which should also be a np matrix.
+
+
+    """
+    def fit(self,X,Y):
+        X = np.array(X)
+        Y = np.array(Y)
+        n_observations = X.shape[0]
+        if X.ndim == 1:
+            X=X.reshape(-1,1)
+
+        X_design = np.hstack((np.ones((n_observations,1)),X))
+        self.Beta = np.zeros((X_design.shape[1],1))
+        Y = Y.reshape(-1,1)
+        X_T = X_design.T
         
         # Now we find the best beta parameters
         for epoch in range(self.epochs):
-            Y_hat = X @ self.Beta
+            Y_hat = X_design @ self.Beta
             residuals = Y - Y_hat
-            d_Beta = (-2/n_observations)*(X.T @ (residuals))
+            d_Beta = (-2/n_observations)*(X_T @ (residuals))
             self.Beta = self.Beta - self.learning_rate*d_Beta
         return self
         
     def predict(self, X):
+        X = np.array(X)
+
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+
         n_observations = X.shape[0]
-        X = np.hstack((np.ones((n_observations,1)),X))
-        return X @ self.Beta
+        X_design = np.hstack((np.ones((n_observations, 1)), X))
+
+        return X_design @ self.Beta
+
