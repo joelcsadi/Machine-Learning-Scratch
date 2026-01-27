@@ -94,6 +94,7 @@ class LinearRegression:
     y_intercept/bias(Beta_0) and the features/weights(Beta_1 -> Beta_n) of the models.
 
     They were calculated using batch gradient descent in fit(X,Y)
+    (test comment)
     """
     def get_Parameters(self):
         return self.Beta
