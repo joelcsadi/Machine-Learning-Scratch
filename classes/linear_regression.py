@@ -14,10 +14,11 @@ where:
 """
 
 class LinearRegression:
-    def __init__(self, learning_rate = 0.001, epochs= 1000):
+    def __init__(self, learning_rate = 0.001, epochs= 1000, mode = "batch"):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.Beta = None
+        self.mode = mode
 
     """
     fit(X,y) finds the parameters that will fit the best line.
@@ -40,13 +41,18 @@ class LinearRegression:
         # A parameter column vector (np matrix) that is initialised to 0 each parameter
         self.Beta = np.zeros((X_design.shape[1],1))
         X_T = X_design.T
-        # Now we find the best beta parameters
-        for epoch in range(self.epochs):
-            Y_hat = X_design @ self.Beta
-            residuals = Y - Y_hat
-            d_Beta = (-2/n_observations)*(X_T @ (residuals))
-            self.Beta = self.Beta - self.learning_rate*d_Beta
+
+        if self.mode == "batch":
+            # Now we find the best beta parameters
+            for epoch in range(self.epochs):
+                Y_hat = X_design @ self.Beta
+                residuals = Y - Y_hat
+                d_Beta = (-2/n_observations)*(X_T @ (residuals))
+                self.Beta = self.Beta - self.learning_rate*d_Beta
+        elif self.mode == "normal":
+            self.Beta = np.linalg.inv(X_T @ X_design) @ X_T @ Y
         return self
+
         
 
     """
