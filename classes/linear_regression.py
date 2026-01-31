@@ -42,15 +42,35 @@ class LinearRegression:
         self.Beta = np.zeros((X_design.shape[1],1))
         X_T = X_design.T
 
+        # Now we find the best beta  using different optimization modes
+
         if self.mode == "batch":
-            # Now we find the best beta parameters
             for epoch in range(self.epochs):
                 Y_hat = X_design @ self.Beta
                 residuals = Y - Y_hat
                 d_Beta = (-2/n_observations)*(X_T @ (residuals))
                 self.Beta = self.Beta - self.learning_rate*d_Beta
+                if not np.isfinite(self.Beta).all():
+                    raise ValueError("Divergence in training detected. Try reducing learning rate or increasing epochs.")
+
         elif self.mode == "normal":
             self.Beta = np.linalg.inv(X_T @ X_design) @ X_T @ Y
+
+        elif self.mode == "stochastic":
+            for epoch in range(self.epochs):
+                indices_array = np.random.permutation(n_observations)
+                for i in indices_array:
+                    X_design_i = X_design[i,:].reshape(1,-1)
+                    Y_i = Y[i]
+                    Y_hat_i =X_design_i @ self.Beta
+                    residual_i = Y_i - Y_hat_i
+                    d_Beta = -2*(X_design_i.T @ residual_i)
+                    self.Beta = self.Beta - self.learning_rate*d_Beta
+
+                    if not np.isfinite(self.Beta).all():
+                        raise ValueError("Divergence in training detected. Try reducing learning rate or increasing epochs.")
+        else:
+            raise ValueError("Invalid mode selected. Choose from 'batch', 'stochastic' or 'normal'")
         return self
 
         
@@ -60,6 +80,8 @@ class LinearRegression:
     given the features matrix X.
     """
     def predict(self, X):
+        if self.Beta is None:
+            raise ValueError("Model is not fitted yet. Please call fit(X,y) before predicting")
         X = np.array(X)
         if X.ndim == 1:
             X = X.reshape(-1, 1)
@@ -78,6 +100,8 @@ class LinearRegression:
 
     """
     def get_R_squared(self,X,Y):
+        if self.Beta is None:
+            raise ValueError("Model is not fitted yet. Please call fit(X,y) before calculating R squared")
         X = np.array(X)
         Y = np.array(Y)
         # If the features vector has only one feature, turn it into a Matrix with Rx1 dimensions
@@ -102,7 +126,6 @@ class LinearRegression:
     They were calculated using batch gradient descent in fit(X,Y)
     """
     def get_Parameters(self):
+        if self.Beta is None:
+            raise ValueError("Model is not fitted yet. Please call fit(X,y) before retrieving parameters")
         return self.Beta
-        
-
-
