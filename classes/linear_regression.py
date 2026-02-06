@@ -1,3 +1,4 @@
+from re import L
 import numpy as np
 """
 A linear regression class that implements the fitting and predicting process in a class.
@@ -14,11 +15,12 @@ where:
 """
 
 class LinearRegression:
-    def __init__(self, learning_rate = 0.001, epochs= 1000, mode = "batch"):
+    def __init__(self, learning_rate = 0.001, epochs= 1000, mode = "batch", batch_size = 32):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.Beta = None
         self.mode = mode
+        self.batch_size = batch_size
 
     """
     fit(X,y) finds the parameters that will fit the best line.
@@ -69,6 +71,22 @@ class LinearRegression:
 
                     if not np.isfinite(self.Beta).all():
                         raise ValueError("Divergence in training detected. Try reducing learning rate or increasing epochs.")
+
+        elif self.mode == 'minibatch':
+            for epoch in range(self.epochs):
+                indices_array = np.random.permutation(n_observations)
+                for i in range(0, n_observations, self.batch_size):
+                    indices_array_i = indices_array[i:i+self.batch_size]
+                    X_design_i = X_design[indices_array_i,:]
+                    Y_i = Y[indices_array_i]
+                    Y_hat =X_design_i @ self.Beta
+                    residual_i = Y_i - Y_hat
+                    d_Beta = (-2/len(indices_array_i))*(X_design_i.T @ residual_i)
+                    self.Beta = self.Beta - self.learning_rate*d_Beta
+
+                    if not np.isfinite(self.Beta).all():
+                        raise ValueError("Divergence in training detected. Try reducing learning rate or increasing epochs.")
+
         else:
             raise ValueError("Invalid mode selected. Choose from 'batch', 'stochastic' or 'normal'")
         return self
