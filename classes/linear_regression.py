@@ -1,6 +1,9 @@
 from re import L
 import numpy as np
-"""
+
+
+class LinearRegression:
+    """
 A linear regression class that implements the fitting and predicting process in a class.
 It will use a vectorized format so that it can scale to more predictors and paramters.
 
@@ -13,8 +16,6 @@ where:
       to reduce the cost function. Gradient descent will be done in a vectorized manner here.
 -
 """
-
-class LinearRegression:
     def __init__(self, learning_rate = 0.001, epochs= 1000, mode = "batch", batch_size = 32):
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -22,13 +23,13 @@ class LinearRegression:
         self.mode = mode
         self.batch_size = batch_size
 
-    """
-    fit(X,y) finds the parameters that will fit the best line.
-    It assumes that even though there is one feature, it should be a np matrix and not
-    a 1D vector. The same applies for the Y vector, which should also be a np matrix.
-
-    """
+    
     def fit(self,X,Y):
+        """
+        fit(X,y) finds the parameters that will fit the best line.
+        It assumes that even though there is one feature, it should be a np matrix and not
+        a 1D vector. The same applies for the Y vector, which should also be a np matrix.
+        """
         # Ensure a list or dataframe will turn to a np array
         X = np.array(X)
         Y = np.array(Y)
@@ -93,11 +94,12 @@ class LinearRegression:
 
         
 
-    """
-    predict(X) uses the parameters fitted on the model uses it to predict the reponse
-    given the features matrix X.
-    """
+    
     def predict(self, X):
+        """
+        predict(X) uses the parameters fitted on the model uses it to predict the reponse
+        given the features matrix X.
+        """
         if self.Beta is None:
             raise ValueError("Model is not fitted yet. Please call fit(X,y) before predicting")
         X = np.array(X)
@@ -107,17 +109,18 @@ class LinearRegression:
         X_design = np.hstack((np.ones((n_observations, 1)), X))
         return X_design @ self.Beta
 
-    """
-    get_R_squared(X,Y) obtains the percentage of variation that the fitted model explains
-    by comparing and subtracting it of the total variaton of the model mean(y_bar).
-    It calculates the variation around the points and the fitted line(Sum of square Residuals /RSS)
-    and calculates the variation around the mean which is(Total sum of squares TSS)
-
-    The formula for R^2 = 1-(RSS/SST)
-    It's a metric for goodness of fit.
-
-    """
+    
     def get_R_squared(self,X,Y):
+        """
+        get_R_squared(X,Y) obtains the percentage of variation that the fitted model explains
+        by comparing and subtracting it of the total variaton of the model mean(y_bar).
+        It calculates the variation around the points and the fitted line(Sum of square Residuals /RSS)
+        and calculates the variation around the mean which is(Total sum of squares TSS)
+
+        The formula for R^2 = 1-(RSS/SST)
+        It's a metric for goodness of fit.
+
+        """
         if self.Beta is None:
             raise ValueError("Model is not fitted yet. Please call fit(X,y) before calculating R squared")
         X = np.array(X)
@@ -136,14 +139,15 @@ class LinearRegression:
 
         return r_squared
     
-    """
-    get_Parameters() returns the parameter vector that were calculated within the fit of the
-    model. It goes from Beta_0 ... Beta_n where n is the nth parameter. It includes the
-    y_intercept/bias(Beta_0) and the features/weights(Beta_1 -> Beta_n) of the models.
-
-    They were calculated using batch gradient descent in fit(X,Y)
-    """
+    
     def get_Parameters(self):
+        """
+        get_Parameters() returns the parameter vector that were calculated within the fit of the
+        model. It goes from Beta_0 ... Beta_n where n is the nth parameter. It includes the
+        y_intercept/bias(Beta_0) and the features/weights(Beta_1 -> Beta_n) of the models.
+
+        They were calculated using batch gradient descent in fit(X,Y)
+        """
         if self.Beta is None:
             raise ValueError("Model is not fitted yet. Please call fit(X,y) before retrieving parameters")
         return self.Beta
